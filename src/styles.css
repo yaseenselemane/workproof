@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+/* Layout: soft grey ground, white rounded cards, pill nav up top, icon rail left.
+   Single light theme by choice. Proof green and proxy clay pass the CVD check
+   (dE 9.9); proxies also carry a strike-through and a label, never colour alone. */
+@theme {
+  --color-ground: #eef1ef;
+  --color-card: #ffffff;
+  --color-ink: #121815;
+  --color-muted: #5c6862;
+  --color-faint: #8a948f;
+  --color-line: #e1e6e3;
+  --color-proof: #0f7a5a;
+  --color-proof-deep: #0b5e45;
+  --color-proof-tint: #e2f2ea;
+  --color-proxy: #c2410c;
+  --color-proxy-ink: #9a3412;
+  --color-proxy-tint: #fcebe2;
+  --color-work: #a86a00;
+  --color-work-tint: #fff3d4;
+  --color-train: #5c6862;
+  --color-train-tint: #edf0ee;
+
+  --font-sans: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --radius-card: 22px;
+}
+
+html, body, #root { min-height: 100%; }
+body {
+  margin: 0;
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible { outline: 2px solid var(--color-proof); outline-offset: 2px; border-radius: 6px; }
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* The hatching from the reference, reused for "proof" fills. */
+.hatch {
+  background-image: repeating-linear-gradient(135deg, rgb(255 255 255 / 0.28) 0 2px, transparent 2px 7px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}

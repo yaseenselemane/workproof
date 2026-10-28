@@ -1,0 +1,9 @@
+source,label_searched,job_id,title,employer_level,mismatch,note
+careerjunction,graduate,2646532,Internship - Supply Chain Graduate,Junior,no,also matched intern
+careerjunction,graduate,2646521,(graduate-titled ad),Junior,no,
+careerjunction,graduate,2646520,Internship - Supply Chain Graduate,Junior,no,also matched intern
+careerjunction,graduate,2645743,(graduate-titled ad),Junior,no,
+careerjunction,graduate,2645735,Supply Chain Graduate - Internship,Junior,no,also matched intern
+careerjunction,trainee,2624969,Trainee Accountant,Junior,no,
+careerjunction,intern,2646166,MQA Intern at Mintek,Intermediate,yes,
+careerjunction,entry level,2646489,Data Entry Clerk,Junior,excluded,matched the word but is not an entry-level label

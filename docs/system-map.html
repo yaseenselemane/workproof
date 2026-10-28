@@ -1,0 +1,509 @@
+<title>Graduate Hiring System Map</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+  /* Layout: single reading column; figures break out to full container width. */
+  :root {
+    --paper: #f5f7f8;
+    --surface: #ffffff;
+    --ink: #15191d;
+    --muted: #59636d;
+    --rule: #d6dce1;
+    --keep: #0b6b68;
+    --drop: #9a4a32;
+    --flag: #b4502f;
+    --context: #c3ccd4;
+    --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --font-body: "IBM Plex Sans", system-ui, -apple-system, Segoe UI, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0f1215;
+      --surface: #171c20;
+      --ink: #e7ecef;
+      --muted: #97a2ac;
+      --rule: #2a3138;
+      --keep: #4ec9c0;
+      --drop: #dd9478;
+      --flag: #d4764f;
+      --context: #3b454e;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0f1215;
+    --surface: #171c20;
+    --ink: #e7ecef;
+    --muted: #97a2ac;
+    --rule: #2a3138;
+    --keep: #4ec9c0;
+    --drop: #dd9478;
+    --flag: #d4764f;
+    --context: #3b454e;
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 40px 72px;
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+  }
+
+  header { display: flex; flex-direction: column; gap: 10px; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 5vw, 44px);
+    font-weight: 600;
+    line-height: 1.12;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .byline { font-size: 14px; color: var(--muted); }
+
+  .claim {
+    border-left: 3px solid var(--keep);
+    padding: 4px 0 4px 20px;
+    font-family: var(--font-display);
+    font-size: clamp(19px, 2.6vw, 25px);
+    line-height: 1.38;
+    text-wrap: balance;
+  }
+  .claim strong { font-weight: 600; color: var(--keep); }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: 23px;
+    font-weight: 600;
+    margin: 0;
+    text-wrap: balance;
+  }
+  section { display: flex; flex-direction: column; gap: 14px; }
+  p { margin: 0; max-width: 68ch; }
+  .muted { color: var(--muted); }
+
+  figure {
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 20px 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-x: auto;
+  }
+  figure svg { display: block; width: 100%; min-width: 560px; max-width: 100%; height: auto; }
+  figcaption {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--muted);
+    border-top: 1px solid var(--rule);
+    padding-top: 12px;
+  }
+  figcaption b { color: var(--ink); font-weight: 600; }
+
+  .loops { display: grid; gap: 22px; }
+  @media (min-width: 860px) { .loops { grid-template-columns: 1fr 1fr; } }
+  .loops figure svg { min-width: 0; }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .stat { background: var(--surface); padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .stat .n {
+    font-family: var(--font-display);
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat .k { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; color: var(--muted); line-height: 1.35; }
+  .stat.lead { background: var(--surface); }
+  .stat.lead .n { color: var(--keep); }
+  .source { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); }
+  .hero { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; }
+  .hero .big { font-family: var(--font-display); font-size: clamp(44px, 9vw, 68px); font-weight: 600; line-height: 1; color: var(--flag); font-variant-numeric: tabular-nums; }
+  .hero p { flex: 1 1 280px; min-width: 0; font-size: 17px; }
+  .units rect { stroke: var(--surface); stroke-width: 2; }
+  .quote { font-family: var(--font-display); font-size: 19px; line-height: 1.4; border-left: 3px solid var(--flag); padding: 2px 0 2px 18px; max-width: 64ch; }
+  details { border: 1px solid var(--rule); border-radius: 4px; background: var(--surface); }
+  details summary { cursor: pointer; padding: 12px 16px; font-size: 14.5px; font-weight: 500; }
+  details summary:focus-visible { outline: 2px solid var(--keep); outline-offset: 2px; }
+  .tbl { overflow-x: auto; padding: 0 16px 14px; }
+  .tbl table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  .tbl th, .tbl td { text-align: left; padding: 7px 10px 7px 0; border-bottom: 1px solid var(--rule); }
+  .tbl th { font-family: var(--font-mono); font-size: 11.5px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+  .tbl td.n { font-family: var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+  .asks { border: 1px solid var(--rule); border-radius: 4px; padding: 18px; background: var(--surface); }
+  .asks ul { margin: 10px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 7px; }
+  .asks li { font-size: 14.5px; }
+  .asks h2 { font-size: 19px; }
+
+  .svg-box { fill: var(--surface); stroke: currentColor; stroke-width: 1.25; }
+  .svg-box-keep { fill: var(--surface); stroke: var(--keep); stroke-width: 2; }
+  .svg-label { font-family: var(--font-body); font-size: 14px; fill: currentColor; }
+  .svg-sub { font-family: var(--font-mono); font-size: 11.5px; fill: var(--muted); }
+  .svg-edge { font-family: var(--font-mono); font-size: 11.5px; fill: var(--muted); }
+  .svg-loopid { font-family: var(--font-display); font-size: 30px; font-weight: 600; fill: currentColor; }
+  line, path, polyline { stroke-linecap: round; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Credify System Thinking Challenge 2026 &middot; Area 04</div>
+    <h1>Why capable graduates stay invisible</h1>
+    <div class="byline">Yaseen Selemane &middot; 28 October 2026 &middot; system map and causal analysis</div>
+  </header>
+
+  <div class="claim">
+    Employers don&rsquo;t lack information about graduates. They&rsquo;re drowning in it.
+    So stop trying to prove the graduate is good &mdash; <strong>make being wrong about a graduate cheap</strong>.
+  </div>
+
+  <section>
+    <h2>The experiment South Africa already ran</h2>
+    <div class="stats">
+      <div class="stat"><span class="n">33.6%</span><span class="k">official unemployment</span></div>
+      <div class="stat"><span class="n">47.4%</span><span class="k">youth 15&ndash;34</span></div>
+      <div class="stat"><span class="n">62.8%</span><span class="k">youth 15&ndash;24</span></div>
+      <div class="stat lead"><span class="n">12.4%</span><span class="k">graduate &mdash; was 10.3% two quarters ago</span></div>
+    </div>
+    <p class="source">Stats SA, Quarterly Labour Force Survey Q2 2026, released 11 August 2026.</p>
+    <p>South Africa already pays employers to hire young people. The Employment Tax Incentive cuts an employer&rsquo;s PAYE bill for workers aged 18&ndash;29, claimed monthly through the EMP201 return, without touching the employee&rsquo;s wage.</p>
+    <div class="claim">
+      The state already made it cheaper to take a chance on a young person. Graduate unemployment went <strong>up</strong> anyway.
+      So money was never the whole constraint &mdash; the employer still cannot tell who is capable.
+    </div>
+    <p>The incentive de-risked the <em>cost</em> of a wrong hire. It did not de-risk the <em>judgement</em>. That gap is what the rest of this page maps, and what the intervention fills.</p>
+  </section>
+
+  <section>
+    <h2>What the job ads say, in the employers&rsquo; own words</h2>
+    <div class="hero">
+      <span class="big">1 in 3</span>
+      <p>roles advertised as <strong>Junior</strong> on CareerJunction are classified by the employer&rsquo;s own level field as Intermediate, Senior or Executive.</p>
+    </div>
+
+    <figure>
+      <svg viewBox="0 0 736 98" role="img" aria-label="Thirty CareerJunction ads with Junior in the title, one square each. Twenty carry the employer level Junior. Ten carry a higher level: eight Intermediate, one Senior, one Executive.">
+        <g class="units">
+          <rect x="10" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior Full Stack Developer: level Junior</title></rect>
+          <rect x="34" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior IT Technician: level Junior</title></rect>
+          <rect x="58" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior Medical Sales Rep: level Junior</title></rect>
+          <rect x="82" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior Freight Forwarding Estimator: level Junior</title></rect>
+          <rect x="106" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior Bookkeeper (Durban): level Junior</title></rect>
+          <rect x="130" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior Logistics Coordinator: level Junior</title></rect>
+          <rect x="154" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior Pastry Chef: level Junior</title></rect>
+          <rect x="178" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior Mechatronics Engineer: level Junior</title></rect>
+          <rect x="202" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior Developer (Flutter/Dart): level Junior</title></rect>
+          <rect x="226" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior VoIP Engineer: level Junior</title></rect>
+          <rect x="250" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior DevOps Engineer: level Junior</title></rect>
+          <rect x="274" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior Java &amp; Angular Developer: level Junior</title></rect>
+          <rect x="298" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior Quantity Surveyor: level Junior</title></rect>
+          <rect x="322" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior Agronomist / Technical Sales: level Junior</title></rect>
+          <rect x="346" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior Inspector: level Junior</title></rect>
+          <rect x="370" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior C# Developer: level Junior</title></rect>
+          <rect x="394" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior Accountant: level Junior</title></rect>
+          <rect x="418" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior Fractional Financial Manager: level Junior</title></rect>
+          <rect x="442" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior Agricultural Researcher: level Junior</title></rect>
+          <rect x="466" y="12" width="20" height="20" rx="3" fill="var(--context)"><title>Junior Broker Service Consultant: level Junior</title></rect>
+          <rect x="490" y="12" width="20" height="20" rx="3" fill="var(--flag)"><title>Junior Bookkeeper: level Intermediate</title></rect>
+          <rect x="514" y="12" width="20" height="20" rx="3" fill="var(--flag)"><title>Junior Key Account Manager: level Intermediate</title></rect>
+          <rect x="538" y="12" width="20" height="20" rx="3" fill="var(--flag)"><title>Junior Financial Manager: level Intermediate</title></rect>
+          <rect x="562" y="12" width="20" height="20" rx="3" fill="var(--flag)"><title>Junior Debtors Administrator: level Intermediate</title></rect>
+          <rect x="586" y="12" width="20" height="20" rx="3" fill="var(--flag)"><title>Junior Creditors/Payment Clerk: level Intermediate</title></rect>
+          <rect x="610" y="12" width="20" height="20" rx="3" fill="var(--flag)"><title>Junior Maintenance Technician: level Intermediate</title></rect>
+          <rect x="634" y="12" width="20" height="20" rx="3" fill="var(--flag)"><title>Junior Costing Analyst: level Intermediate</title></rect>
+          <rect x="658" y="12" width="20" height="20" rx="3" fill="var(--flag)"><title>Accountant / Junior Finance Manager: level Intermediate</title></rect>
+          <rect x="682" y="12" width="20" height="20" rx="3" fill="var(--flag)"><title>Junior Accounts: level Senior</title></rect>
+          <rect x="706" y="12" width="20" height="20" rx="3" fill="var(--flag)"><title>Junior-Mid Finance Manager: level Executive</title></rect>
+        </g>
+        <line x1="10" y1="44" x2="486" y2="44" stroke="currentColor" stroke-width="1" opacity="0.35"/>
+        <line x1="490" y1="44" x2="726" y2="44" stroke="currentColor" stroke-width="1" opacity="0.6"/>
+        <text class="svg-label" x="248" y="64" text-anchor="middle">20 &middot; level says Junior</text>
+        <text class="svg-label" x="608" y="64" text-anchor="middle">10 &middot; level says higher</text>
+        <text class="svg-sub" x="608" y="84" text-anchor="middle">8 Intermediate &middot; 1 Senior &middot; 1 Executive</text>
+      </svg>
+      <figcaption><b>One square per ad; hover a square for the role.</b> Every CareerJunction result for &ldquo;junior&rdquo; on 28 October 2026: 59 live ads, all of them rather than a sample, of which 30 carry Junior in the title. The level is the employer&rsquo;s own field on each ad, so no interpretation sits between the ad and the count.</figcaption>
+    </figure>
+
+    <p class="quote">A Pnet listing titled &ldquo;Site Agent / <strong>Junior</strong> contracts manager&rdquo; asks for a minimum of <strong>8&ndash;10 years&rsquo;</strong> experience.</p>
+    <p class="muted">On Pnet, 8 of 24 junior ads read state an experience requirement and 6 of those ask for two years or more. The rest could not be checked before Pnet blocked automated reads, so treat that as a floor, not a rate.</p>
+
+    <details>
+      <summary>The 10 &ldquo;junior&rdquo; ads the employer ranks higher</summary>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Title on the ad</th><th>Employer level</th><th>Job ID</th></tr></thead>
+          <tbody>
+            <tr><td>Junior-Mid Finance Manager (ICT)</td><td>Executive</td><td class="n">2646239</td></tr>
+            <tr><td>Junior Accounts</td><td>Senior</td><td class="n">2646323</td></tr>
+            <tr><td>Junior Bookkeeper</td><td>Intermediate</td><td class="n">2646635</td></tr>
+            <tr><td>Junior Key Account Manager (Beauty)</td><td>Intermediate</td><td class="n">2645602</td></tr>
+            <tr><td>Junior Financial Manager</td><td>Intermediate</td><td class="n">2629580</td></tr>
+            <tr><td>Junior Debtors Administrator</td><td>Intermediate</td><td class="n">2646311</td></tr>
+            <tr><td>Junior Creditors/Payment Clerk</td><td>Intermediate</td><td class="n">2645792</td></tr>
+            <tr><td>Junior Maintenance Technician (Medical)</td><td>Intermediate</td><td class="n">2646508</td></tr>
+            <tr><td>Junior Costing Analyst</td><td>Intermediate</td><td class="n">2646512</td></tr>
+            <tr><td>Accountant / Junior Finance Manager</td><td>Intermediate</td><td class="n">2646120</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2>Who is in the system, and who can change it</h2>
+    <p>The challenge asks how employers can identify capable graduates. Almost every answer will be built on the left of this line, where the graduate stands. The constraint is on the right.</p>
+
+    <figure>
+      <svg viewBox="0 0 840 430" role="img" aria-label="System map: university and evidence platforms feed the graduate, who applies into an application pile; the pile reaches a hiring manager who also carries company risk policy and who filters on proxies to a hire or reject decision. A dashed line separates the supply side, where most submissions build, from the demand side, where the constraint sits.">
+        <defs>
+          <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+          </marker>
+          <marker id="a1k" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--keep)"/>
+          </marker>
+        </defs>
+
+        <line x1="520" y1="18" x2="520" y2="396" stroke="currentColor" stroke-width="1" stroke-dasharray="5 6" opacity="0.45"/>
+        <text class="svg-sub" x="258" y="418" text-anchor="middle">where almost every submission builds</text>
+        <text class="svg-sub" x="682" y="418" text-anchor="middle" fill="var(--keep)">where the constraint sits</text>
+
+        <rect class="svg-box" x="20" y="36" width="190" height="52" rx="3"/>
+        <text class="svg-label" x="115" y="67" text-anchor="middle">University</text>
+
+        <rect class="svg-box" x="238" y="36" width="210" height="52" rx="3"/>
+        <text class="svg-label" x="343" y="60" text-anchor="middle">Evidence platforms</text>
+        <text class="svg-sub" x="343" y="77" text-anchor="middle">portfolios, badges</text>
+
+        <rect class="svg-box" x="118" y="176" width="200" height="52" rx="3"/>
+        <text class="svg-label" x="218" y="207" text-anchor="middle">Graduate</text>
+
+        <rect class="svg-box" x="118" y="300" width="200" height="56" rx="3"/>
+        <text class="svg-label" x="218" y="324" text-anchor="middle">Application pile</text>
+        <text class="svg-sub" x="218" y="342" text-anchor="middle">200+ per role</text>
+
+        <line x1="115" y1="88" x2="188" y2="172" stroke="currentColor" stroke-width="1.25" marker-end="url(#a1)"/>
+        <text class="svg-edge" x="104" y="140" text-anchor="end">credential</text>
+
+        <line x1="343" y1="88" x2="256" y2="172" stroke="currentColor" stroke-width="1.25" marker-end="url(#a1)"/>
+        <text class="svg-edge" x="356" y="140" text-anchor="start">more evidence</text>
+
+        <line x1="218" y1="228" x2="218" y2="296" stroke="currentColor" stroke-width="1.25" marker-end="url(#a1)"/>
+        <text class="svg-edge" x="228" y="266" text-anchor="start">applies</text>
+
+        <rect class="svg-box" x="600" y="52" width="216" height="52" rx="3"/>
+        <text class="svg-label" x="708" y="83" text-anchor="middle">Company risk policy</text>
+
+        <rect class="svg-box-keep" x="600" y="196" width="216" height="56" rx="3"/>
+        <text class="svg-label" x="708" y="220" text-anchor="middle" fill="var(--keep)">Hiring manager</text>
+        <text class="svg-sub" x="708" y="238" text-anchor="middle" fill="var(--keep)">holds the power to change this</text>
+
+        <rect class="svg-box" x="600" y="330" width="216" height="52" rx="3"/>
+        <text class="svg-label" x="708" y="361" text-anchor="middle">Hire or reject</text>
+
+        <line x1="708" y1="104" x2="708" y2="192" stroke="currentColor" stroke-width="1.25" marker-end="url(#a1)"/>
+        <text class="svg-edge" x="698" y="152" text-anchor="end">carries the cost of a bad hire</text>
+
+        <polyline points="318,324 460,324 460,224 596,224" fill="none" stroke="currentColor" stroke-width="1.25" marker-end="url(#a1)"/>
+        <text class="svg-edge" x="388" y="314" text-anchor="middle">seconds of attention each</text>
+
+        <line x1="708" y1="252" x2="708" y2="326" stroke="currentColor" stroke-width="1.25" marker-end="url(#a1)"/>
+        <text class="svg-edge" x="718" y="292" text-anchor="start">filters on proxies</text>
+      </svg>
+      <figcaption><b>The power to change the situation sits with the hiring manager, not the graduate.</b> Everything on the left adds to what the graduate carries into the pile. Nothing on the left changes how the manager reads it, or what a wrong decision costs them.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Two loops keep it running</h2>
+    <p>Both are reinforcing. Neither is anybody&rsquo;s fault, which is why neither has been fixed by good intentions.</p>
+
+    <div class="loops">
+      <figure>
+        <svg viewBox="0 0 720 380" role="img" aria-label="Reinforcing loop R1, signal saturation: a graduate adds more evidence, applications per role rise, attention per application falls, any one signal is worth less, which creates pressure to add more evidence.">
+          <defs>
+            <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+            </marker>
+          </defs>
+
+          <rect class="svg-box" x="24" y="28" width="226" height="64" rx="3"/>
+          <text class="svg-label" x="137" y="55" text-anchor="middle">Graduate adds</text>
+          <text class="svg-label" x="137" y="75" text-anchor="middle">more evidence</text>
+
+          <rect class="svg-box" x="470" y="28" width="226" height="64" rx="3"/>
+          <text class="svg-label" x="583" y="55" text-anchor="middle">Applications per</text>
+          <text class="svg-label" x="583" y="75" text-anchor="middle">role rise</text>
+
+          <rect class="svg-box" x="470" y="252" width="226" height="64" rx="3"/>
+          <text class="svg-label" x="583" y="279" text-anchor="middle">Attention per</text>
+          <text class="svg-label" x="583" y="299" text-anchor="middle">application falls</text>
+
+          <rect class="svg-box" x="24" y="252" width="226" height="64" rx="3"/>
+          <text class="svg-label" x="137" y="279" text-anchor="middle">Any one signal</text>
+          <text class="svg-label" x="137" y="299" text-anchor="middle">is worth less</text>
+
+          <line x1="254" y1="60" x2="464" y2="60" stroke="currentColor" stroke-width="1.25" marker-end="url(#a2)"/>
+          <text class="svg-edge" x="359" y="48" text-anchor="middle">volume</text>
+
+          <line x1="583" y1="96" x2="583" y2="247" stroke="currentColor" stroke-width="1.25" marker-end="url(#a2)"/>
+          <text class="svg-edge" x="593" y="175" text-anchor="start">attention is finite</text>
+
+          <line x1="464" y1="284" x2="256" y2="284" stroke="currentColor" stroke-width="1.25" marker-end="url(#a2)"/>
+          <text class="svg-edge" x="360" y="304" text-anchor="middle">skimmed, not read</text>
+
+          <line x1="137" y1="248" x2="137" y2="97" stroke="currentColor" stroke-width="1.25" marker-end="url(#a2)"/>
+          <text class="svg-edge" x="127" y="175" text-anchor="end">must stand out</text>
+
+          <text class="svg-loopid" x="360" y="178" text-anchor="middle">R1</text>
+          <text class="svg-sub" x="360" y="199" text-anchor="middle">reinforcing</text>
+          <text class="svg-sub" x="360" y="217" text-anchor="middle">signal saturation</text>
+        </svg>
+        <figcaption><b>Everyone adding signal makes signal worthless.</b> The graduate is playing harder at a game whose value is falling as they play it.</figcaption>
+      </figure>
+
+      <figure>
+        <svg viewBox="0 0 720 380" role="img" aria-label="Reinforcing loop R2, risk asymmetry: a bad hire is punished while a missed hire is invisible, so the manager filters on proxies, so fewer juniors get hired, so there is less evidence that juniors succeed, which hardens the belief that juniors are risky.">
+          <defs>
+            <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+            </marker>
+          </defs>
+
+          <rect class="svg-box" x="24" y="28" width="226" height="64" rx="3"/>
+          <text class="svg-label" x="137" y="55" text-anchor="middle">Bad hire punished,</text>
+          <text class="svg-label" x="137" y="75" text-anchor="middle">missed hire invisible</text>
+
+          <rect class="svg-box" x="470" y="28" width="226" height="64" rx="3"/>
+          <text class="svg-label" x="583" y="55" text-anchor="middle">Manager filters</text>
+          <text class="svg-label" x="583" y="75" text-anchor="middle">on proxies</text>
+
+          <rect class="svg-box" x="470" y="252" width="226" height="64" rx="3"/>
+          <text class="svg-label" x="583" y="279" text-anchor="middle">Fewer juniors</text>
+          <text class="svg-label" x="583" y="299" text-anchor="middle">get hired</text>
+
+          <rect class="svg-box" x="24" y="252" width="226" height="64" rx="3"/>
+          <text class="svg-label" x="137" y="279" text-anchor="middle">Less evidence that</text>
+          <text class="svg-label" x="137" y="299" text-anchor="middle">juniors succeed</text>
+
+          <line x1="254" y1="60" x2="464" y2="60" stroke="currentColor" stroke-width="1.25" marker-end="url(#a3)"/>
+          <text class="svg-edge" x="359" y="48" text-anchor="middle">rational caution</text>
+
+          <line x1="583" y1="96" x2="583" y2="247" stroke="currentColor" stroke-width="1.25" marker-end="url(#a3)"/>
+          <text class="svg-edge" x="593" y="175" text-anchor="start">experience required</text>
+
+          <line x1="464" y1="284" x2="256" y2="284" stroke="currentColor" stroke-width="1.25" marker-end="url(#a3)"/>
+          <text class="svg-edge" x="360" y="304" text-anchor="middle">no track record forms</text>
+
+          <line x1="137" y1="248" x2="137" y2="97" stroke="currentColor" stroke-width="1.25" marker-end="url(#a3)"/>
+          <text class="svg-edge" x="127" y="175" text-anchor="end">belief hardens</text>
+
+          <text class="svg-loopid" x="360" y="178" text-anchor="middle">R2</text>
+          <text class="svg-sub" x="360" y="199" text-anchor="middle">reinforcing</text>
+          <text class="svg-sub" x="360" y="217" text-anchor="middle">risk asymmetry</text>
+        </svg>
+        <figcaption><b>Over-filtering is rational, so it persists.</b> A bad junior hire costs a manager months and visible blame. A missed good hire costs nothing anyone measures.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>Two interventions, two different loops</h2>
+    <p>This is the choice. One of these is what most of the room will build.</p>
+
+    <figure>
+      <svg viewBox="0 0 840 430" role="img" aria-label="Comparison: a graduate portfolio platform feeds into loop R1, adding evidence so the loop keeps spinning. An employer evaluation kit cuts the edge of loop R2 by lowering the cost of a wrong hire, opening the loop.">
+        <defs>
+          <marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--drop)"/>
+          </marker>
+          <marker id="a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--keep)"/>
+          </marker>
+          <marker id="a6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <circle cx="216" cy="150" r="104" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.55"/>
+        <path d="M 216 46 A 104 104 0 0 1 300 88" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#a6)"/>
+        <text class="svg-loopid" x="216" y="145" text-anchor="middle">R1</text>
+        <text class="svg-sub" x="216" y="167" text-anchor="middle">signal saturation</text>
+        <text class="svg-sub" x="216" y="185" text-anchor="middle">still spinning</text>
+
+        <circle cx="624" cy="150" r="104" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.55" stroke-dasharray="320 60" transform="rotate(118 624 150)"/>
+        <path d="M 624 46 A 104 104 0 0 1 708 88" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#a6)"/>
+        <text class="svg-loopid" x="624" y="145" text-anchor="middle" fill="var(--keep)">R2</text>
+        <text class="svg-sub" x="624" y="167" text-anchor="middle" fill="var(--keep)">risk asymmetry</text>
+        <text class="svg-sub" x="624" y="185" text-anchor="middle" fill="var(--keep)">loop opened</text>
+
+        <line x1="545" y1="212" x2="575" y2="246" stroke="var(--keep)" stroke-width="2.5"/>
+        <line x1="575" y1="212" x2="545" y2="246" stroke="var(--keep)" stroke-width="2.5"/>
+
+        <rect x="56" y="330" width="320" height="58" rx="3" fill="var(--surface)" stroke="var(--drop)" stroke-width="1.5" stroke-dasharray="6 4"/>
+        <text class="svg-label" x="216" y="354" text-anchor="middle" fill="var(--drop)">Graduate portfolio platform</text>
+        <text class="svg-sub" x="216" y="373" text-anchor="middle" fill="var(--drop)">rejected &middot; information tier</text>
+
+        <line x1="216" y1="326" x2="216" y2="262" stroke="var(--drop)" stroke-width="1.75" marker-end="url(#a4)"/>
+        <text class="svg-edge" x="226" y="300" text-anchor="start" fill="var(--drop)">adds to the pile</text>
+
+        <rect x="464" y="330" width="320" height="58" rx="3" fill="var(--surface)" stroke="var(--keep)" stroke-width="2"/>
+        <text class="svg-label" x="624" y="354" text-anchor="middle" fill="var(--keep)">Employer evaluation kit</text>
+        <text class="svg-sub" x="624" y="373" text-anchor="middle" fill="var(--keep)">chosen &middot; rules tier</text>
+
+        <line x1="600" y1="326" x2="572" y2="258" stroke="var(--keep)" stroke-width="2" marker-end="url(#a5)"/>
+        <text class="svg-edge" x="612" y="300" text-anchor="start" fill="var(--keep)">cuts the cost of being wrong</text>
+
+        <text class="svg-sub" x="216" y="412" text-anchor="middle">more signal into a saturated channel</text>
+        <text class="svg-sub" x="624" y="412" text-anchor="middle">changes what a wrong decision costs</text>
+      </svg>
+      <figcaption><b>A portfolio platform intervenes on information flow &mdash; a weak leverage point, because the channel is already saturated.</b> Changing who bears evaluation cost and how the decision is made intervenes on the rules, which is stronger. The information tier is necessary but not sufficient; the kit sits on top of it rather than against it.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>What the kit actually is</h2>
+    <p>A real job ad goes in. Out comes the three observable behaviours that predict success in that role with proxy requirements stripped out, a 45-minute work sample that tests those three and nothing else, and an anchored rubric a human fills in.</p>
+    <p class="muted">The tool drafts. A person scores and decides. That line is a design position, not an omission, and it is where the fairness argument lives.</p>
+  </section>
+
+  <div class="asks">
+    <h2>Questions for the mentor session</h2>
+    <ul>
+      <li>Attack the asymmetry claim first &mdash; is a missed good hire really unmeasured where you have worked?</li>
+      <li>Is this individual or team? The scoring says &ldquo;what they personally contributed&rdquo;.</li>
+      <li>Presentation length on 31 October &mdash; twelve finalists in ninety minutes suggests about seven minutes each.</li>
+      <li>File formats for the documentation and the deck, and whether judges run the code.</li>
+      <li>Does the repository need to be public, or is granting access enough?</li>
+    </ul>
+  </div>
+</div>
