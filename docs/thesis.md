@@ -7,7 +7,7 @@ Yaseen Selemane · 28 October 2026
 
 ---
 
-## The spine (say this in one breath)
+## The argument in one line
 
 > Employers don't lack information about graduates. They're drowning in it.
 > So stop trying to prove the graduate is good — make **being wrong about a
@@ -15,10 +15,9 @@ Yaseen Selemane · 28 October 2026
 
 ---
 
-## The experiment South Africa already ran (lead with this)
+## The experiment South Africa already ran
 
-This is the part no borrowed analysis will have. Stats SA, Quarterly Labour
-Force Survey **Q2 2026**, released 11 August 2026:
+Stats SA, Quarterly Labour Force Survey **Q2 2026**, released 11 August 2026:
 
 | Measure | Q2 2026 |
 |---|---|
@@ -45,13 +44,14 @@ The ETI de-risked the *cost* of a wrong hire. It did not de-risk the
 already built — which also answers "why would anyone adopt this": the subsidy
 is already on the table and employers still hesitate.
 
-**Verify before slides:** confirm the 12.4% against the Q2 media release (it is
-taken from the Q2 presentation slides) and confirm ETI rates at sars.gov.za —
-vendor blogs disagree (R1,000 vs R1,500/month; R6,500 vs R7,500 ceiling). The
-argument needs only that the incentive exists, not its exact rand value.
+**Sources checked:** the 12.4% is in Stats SA's full Q2 2026 statistical release
+(P0211, section 4.1). The SARS employer guide to the ETI (PAYE-GEN-01-G05) gives
+up to R1,500 a month per qualifying employee in the first 12 months (rates from
+1 April 2025), and the incentive runs until 28 February 2029. The argument needs
+only that the incentive exists, not its exact rand value.
 
-**Do not claim** employers under-use the ETI. No uptake data was found. The
-provable claim is "the incentive exists and the problem persists."
+No data was found on how many employers claim the ETI, so this argument claims
+only that the incentive exists and the problem persists.
 
 ---
 
@@ -60,23 +60,22 @@ provable claim is "the incentive exists and the problem persists."
 The intuitive response is *give employers more evidence*: portfolios, verified
 projects, skill badges. Two things are wrong with it.
 
-**1. Signal saturation.** A junior role draws hundreds of applications and gets
-seconds of attention each. Every new evidence platform makes the stack heavier,
-not more legible. When everyone adds signal, signal becomes noise — and the
-candidates who most need to stand out are the ones with the least ability to
-buy attention. Adding evidence is a move inside a game the graduate is losing;
-it does not change the game.
+**1. Signal saturation.** A junior role draws more applications than anyone can
+read with care, and each gets seconds of attention. Every new evidence platform
+makes the stack heavier, not more legible. When everyone adds signal, signal
+becomes noise — and the candidates who most need to stand out are the ones with
+the least ability to buy attention. Adding evidence is a move inside a game the
+graduate is losing; it does not change the game.
 
-**2. Risk asymmetry — the one with teeth.** A bad junior hire costs a manager
-months of supervision and visible reputational damage. A missed good hire costs
-them nothing anyone will ever measure. Over-filtering on degree, prior
-experience and referral is therefore *rational behaviour*, not laziness or
-prejudice. An incentive that asymmetric cannot be fixed by handing the
-disadvantaged side more paperwork.
+**2. Risk asymmetry.** A bad junior hire costs a manager months of supervision
+and visible reputational damage. A missed good hire costs them nothing anyone
+will ever measure. Over-filtering on degree, prior experience and referral is
+therefore *rational behaviour*, not laziness or prejudice. An incentive that
+asymmetric cannot be fixed by handing the disadvantaged side more paperwork.
 
 Both causes point the same way: the constraint sits with the **employer**, not
-the graduate. Almost every submission will build for the graduate. That is the
-mistake.
+the graduate. Most interventions target the graduate; this one targets the
+employer.
 
 ## The intervention
 
@@ -94,10 +93,10 @@ argument lives.
 
 Why this lowers the cost of being wrong: the employer's evaluation effort stops
 being burned once per candidate and becomes a reusable artifact; the decision
-becomes auditable after the fact; and a structured work sample is a far better
-predictor of job performance than the unstructured interview or the years-of-
-experience filter it replaces. *(Grounding: the Schmidt & Hunter selection-
-validity meta-analyses. VERIFY the figures before they go on a slide.)*
+becomes auditable after the fact; and a work sample scored against a written
+rubric predicts job performance better than the unstructured interview or the
+years-of-experience filter it replaces (Schmidt and Hunter, 1998; Sackett and
+colleagues, 2022).
 
 ## The intervention we rejected
 
@@ -107,12 +106,8 @@ Using Donella Meadows' leverage points: a portfolio platform intervenes on
 **information flow** — a weak tier, because it adds to a channel that is already
 saturated. Changing *who bears evaluation cost* and *how the decision is made*
 intervenes on the **rules** tier, which is stronger. The information tier is
-necessary but not sufficient; our layer sits on top of it rather than against
+necessary but not sufficient; this layer sits on top of it rather than against
 it.
-
-*(Tone discipline: Credify partly is the information tier. The position is
-"necessary but not sufficient, and this complements it" — never "your model is
-wrong.")*
 
 ## What would prove this wrong
 
@@ -132,12 +127,12 @@ Junior 20 · Intermediate 8 · Senior 1 · Executive 1 → **10 of 30 mismatched
 No interpretation involved: it's the employer's own field contradicting the
 employer's own title. Data: `evidence/junior_ads_careerjunction.csv`.
 
-**Quote for the deck:** Pnet, "Site Agent / Junior contracts manager" —
-"Minimum 8–10 years' experience in construction."
+**Quote:** Pnet, "Site Agent / Junior contracts manager" — "Minimum 8–10 years'
+experience in construction."
 
-**Pnet, floor only:** of 24 junior ads read, 8 state an experience requirement,
-6 of them 2+ years. The other 16 were not verified (Pnet blocked automated reads
-mid-collection), so present it as "at least", never as a rate.
+**Pnet, a floor:** of 24 junior ads read, 8 state an experience requirement, 6
+of them 2+ years. The other 16 could not be checked (Pnet blocked automated
+reads mid-collection), so this is a floor, not a rate.
 Data: `evidence/junior_ads_pnet.csv`.
 
 **The word matters (second pass, same day):** same measure across the other
@@ -150,18 +145,13 @@ entry-level labels on CareerJunction —
 
 "Junior" is the most common entry-level label *and* the one most often attached
 to roles the employer itself ranks higher. "Graduate" ads tend to say the honest
-thing ("No experience? No problem!"). Pitch line: **"junior" has become the word
-employers use for "experienced but cheap."** Caveat: 7 is a tiny group —
-present the contrast as a pattern, not a rate. The one mismatch there is itself
-quotable: "MQA Intern" at Mintek, ranked Intermediate.
+thing ("No experience? No problem!"). **"Junior" has become the word employers
+use for "experienced but cheap."** Seven is a small group, so the contrast is a
+pattern, not a rate. The one mismatch there: "MQA Intern" at Mintek, ranked
+Intermediate.
 Data: `evidence/entry_labels_careerjunction.csv`. "Data Entry Clerk" was
 excluded as a false match for "entry level".
 
-**Limits to state if asked:** one day's snapshot, two boards, recruiter-posted
-ads over-represented (Datafin posts many). One stale ad from April 2024 is in
-the 30 and is a Junior/Junior match, so it doesn't inflate the mismatch.
-
-## Open decisions
-
-- Repo name, public vs. access instructions
-- Stack: single page + thin backend, API key server-side
+**Limits:** one day's snapshot, two boards, recruiter-posted ads
+over-represented (Datafin posts many). One stale ad from April 2024 is in the 30
+and is a Junior/Junior match, so it doesn't inflate the mismatch.
