@@ -60,8 +60,9 @@ only that the incentive exists and the problem persists.
 The intuitive response is *give employers more evidence*: portfolios, verified
 projects, skill badges. Two things are wrong with it.
 
-**1. Signal saturation.** A junior role draws more applications than anyone can
-read with care, and each gets seconds of attention. Every new evidence platform
+**1. Signal saturation.** A junior role can draw more applications than anyone
+can read with care, each getting seconds of attention (application volumes were
+not measured, so this loop rests on reasoning, not data). Every new evidence platform
 makes the stack heavier, not more legible. When everyone adds signal, signal
 becomes noise — and the candidates who most need to stand out are the ones with
 the least ability to buy attention. Adding evidence is a move inside a game the
@@ -108,6 +109,15 @@ saturated. Changing *who bears evaluation cost* and *how the decision is made*
 intervenes on the **rules** tier, which is stronger. The information tier is
 necessary but not sufficient; this layer sits on top of it rather than against
 it.
+
+## How this differs from existing skills-test platforms
+
+Online assessment sites such as TestGorilla and Vervoe already exist; they
+mainly offer libraries of ready-made tests. WorkProof starts from the
+employer's own job ad and removes its proxies, so the test comes from the real
+duties; it shows the employer what their experience rule would have done to
+real candidates ("the filter you didn't use"); and it is free and built for
+small South African employers, linked to the ETI they can already claim.
 
 ## What would prove this wrong
 

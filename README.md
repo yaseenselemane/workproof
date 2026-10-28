@@ -4,6 +4,8 @@
 
 **Live demo: [workproof-gray.vercel.app](https://workproof-gray.vercel.app)**. Nothing to install. Start with the sample ad, open the candidate link on a phone, and watch the answer arrive.
 
+**Submission documents:** [project documentation (PDF)](docs/WorkProof-Project-Documentation.pdf) · [pitch deck (PDF)](docs/WorkProof-Pitch-Deck.pdf)
+
 WorkProof turns a job ad an employer already has into a 45-minute test of the real work, sent to candidates' phones and scored blind. It is built for the Credify System Thinking Challenge 2026, challenge area 04: *how can employers identify capable graduates who lack traditional work experience?*
 
 ## The idea in one paragraph
@@ -94,5 +96,5 @@ Built by Yaseen Selemane, using Claude Code as an AI engineering assistant. Who 
 src/lib/        X-ray rules, planted-error ledgers, rules kit, live sync, state (with tests)
 src/pages/      Landing, Ad, X-ray, Kit, Link, Candidate, Live inbox, Score, Receipt
 supabase/       database migrations and the draft-kit Edge Function
-docs/           thesis, system map, job-ad evidence (CSV)
+docs/           project documentation and pitch deck (PDF), thesis, system map, job-ad evidence (CSV)
 ```
