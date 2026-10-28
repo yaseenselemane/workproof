@@ -1,8 +1,9 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import gsap from 'gsap'
 import { useHiring, allScored, total } from '../lib/store.tsx'
 import { matchErrors } from '../lib/ledger.ts'
+import { companyFrom, composeUrl, emailHtml, emailSubject, emailText, type MailVia } from '../lib/email.ts'
 import type { Checkin, Decision } from '../lib/types.ts'
 import { BigNum, Button, Card, CardHead, Heading, Icon, LinkButton, Page } from '../components/ui.tsx'
 import { tag } from './Live.tsx'
@@ -12,6 +13,29 @@ export const OUTCOMES: { v: Checkin['outcome']; label: string }[] = [
   { v: 'expected', label: 'Doing what we hoped' },
   { v: 'struggling', label: 'Struggling' },
 ]
+
+const VIA: [MailVia, string][] = [['gmail', 'Gmail'], ['outlook', 'Outlook'], ['app', 'Email app']]
+const savedVia = (): MailVia => {
+  try { const v = localStorage.getItem('wp:mailvia'); return VIA.some(([k]) => k === v) ? (v as MailVia) : 'gmail' } catch { return 'gmail' }
+}
+
+// Selection copy works on plain-http addresses too, where the async clipboard API is blocked, and it keeps the design.
+function copyRich(html: string) {
+  const box = document.createElement('div')
+  box.innerHTML = html
+  box.style.cssText = 'position:fixed;left:-9999px;top:0'
+  document.body.appendChild(box)
+  const sel = window.getSelection()
+  const range = document.createRange()
+  range.selectNodeContents(box)
+  sel?.removeAllRanges()
+  sel?.addRange(range)
+  let ok = false
+  try { ok = document.execCommand('copy') } catch { ok = false }
+  sel?.removeAllRanges()
+  box.remove()
+  return ok
+}
 
 const DECISIONS: { v: Decision; label: string }[] = [
   { v: 'interview', label: 'Invite to final interview' },
@@ -27,6 +51,12 @@ export default function Receipt() {
   const [copied, setCopied] = useState(false)
   const [outcome, setOutcome] = useState<Checkin['outcome'] | null>(null)
   const [checkNote, setCheckNote] = useState('')
+  const [mailText, setMailText] = useState<string | null>(null)
+  const [editingMail, setEditingMail] = useState(false)
+  const [copyState, setCopyState] = useState<'' | 'copied' | 'failed'>('')
+  const [via, setVia] = useState<MailVia>(savedVia)
+  // A new decision means a different email; drop any edits made to the old one.
+  useEffect(() => { setMailText(null); setEditingMail(false); setCopyState('') }, [s?.decision])
 
   useLayoutEffect(() => {
     if (!paper.current) return
@@ -49,11 +79,31 @@ export default function Receipt() {
   const strong = scored.filter(x => x.v === 4)
   const weakest = [...scored].sort((x, y) => x.v - y.v)[0]
   const nextLevel = weakest && weakest.v < 4 ? kit.rubric.find(r => r.ability === weakest.a.id)?.levels[weakest.v] : null
-  const feedback = [
-    `Thank you for taking the ${kit.role} test.`,
-    strong.length ? `What you did well: ${strong.map(x => x.a.name.toLowerCase()).join('; ')}.` : `Your strongest area: ${[...scored].sort((x, y) => y.v - x.v)[0]?.a.name.toLowerCase()}.`,
-    nextLevel && weakest ? `To grow: on "${weakest.a.name.toLowerCase()}", the next level looks like this: ${nextLevel.toLowerCase()}.` : 'You reached the top level on every ability we tested.',
-  ].join(' ')
+  const strengths = strong.length ? `What you did well: ${strong.map(x => x.a.name.toLowerCase()).join('; ')}.` : `Your strongest area: ${[...scored].sort((x, y) => y.v - x.v)[0]?.a.name.toLowerCase()}.`
+  const growth = nextLevel && weakest ? `To grow: on "${weakest.a.name.toLowerCase()}", the next level looks like this: ${nextLevel.toLowerCase()}.` : 'You reached the top level on every ability we tested.'
+  const feedback = [`Thank you for taking the ${kit.role} test.`, strengths, growth].join(' ')
+
+  // The employer's own email app sends it, so the message comes from them and WorkProof needs no mail service.
+  // A compose link can only carry plain text, so the designed version is copied for the employer to paste in.
+  const email = s.answers.email
+  const mailIn = s.decision ? {
+    role: kit.role, company: companyFrom(xray.employer), firstName: s.name.split(' ')[0] ?? s.name, decision: s.decision, total: total(s),
+    abilities: scored.map(x => ({ id: x.a.id, name: x.a.name, score: x.v })), strengths, growth,
+  } : null
+  const body = mailIn ? mailText ?? emailText(mailIn) : ''
+  const viaLabel = VIA.find(([k]) => k === via)?.[1] ?? 'Gmail'
+  const pickVia = (v: MailVia) => { setVia(v); try { localStorage.setItem('wp:mailvia', v) } catch { /* remembered for this visit only */ } }
+  const open = (withBody: boolean) => {
+    if (!mailIn || !email) return
+    const url = composeUrl(via, email, emailSubject(mailIn), withBody ? body : '')
+    if (via === 'app') window.location.href = url
+    else window.open(url, '_blank', 'noopener')
+  }
+  function copyAndOpen() {
+    if (!mailIn) return
+    setCopyState(copyRich(emailHtml(mailIn, body)) ? 'copied' : 'failed')
+    open(false)
+  }
 
   async function copy() {
     try { await navigator.clipboard.writeText(feedback); setCopied(true) } catch { setCopied(false) }
@@ -113,6 +163,42 @@ export default function Receipt() {
                 </label>
               ))}
             </div>
+          </Card>
+          <Card aria-label="Send the result">
+            <CardHead title="Send the result" sub="Opens your email app with the message already written. Read it, then send." />
+            {!revealed ? (
+              <p className="text-[14px] text-muted">Contact details unlock once every answer is scored.</p>
+            ) : email && !mailIn ? (
+              <><p className="font-mono text-[13px] text-muted">{email}</p><p className="mt-2 text-[13.5px] text-muted">Choose a decision first, and the email writes itself.</p></>
+            ) : email && mailIn ? (
+              <>
+                <p className="mb-3 text-[13.5px]"><span className="text-muted">To</span> <span className="font-mono">{email}</span><br /><span className="text-muted">Subject</span> {emailSubject(mailIn)}</p>
+                {editingMail ? (
+                  <textarea aria-label="Email wording" rows={12} value={body} onChange={e => setMailText(e.target.value)} className="w-full rounded-2xl bg-ground px-4 py-3 text-[14px] leading-relaxed outline-none focus:ring-2 focus:ring-proof" />
+                ) : (
+                  <iframe title="Email preview" sandbox="" srcDoc={emailHtml(mailIn, body)} className="h-[560px] w-full rounded-2xl ring-1 ring-line" />
+                )}
+                <div className="mt-3 flex flex-wrap items-center gap-1.5" role="radiogroup" aria-label="Send with">
+                  <span className="mr-1 text-[13px] text-muted">Send with</span>
+                  {VIA.map(([v, label]) => (
+                    <button key={v} type="button" role="radio" aria-checked={via === v} onClick={() => pickVia(v)}
+                      className={`min-h-9 rounded-full px-3.5 text-[13px] font-semibold transition-colors ${via === v ? 'bg-proof text-white' : 'bg-ground hover:bg-proof-tint'}`}>{label}</button>
+                  ))}
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button onClick={copyAndOpen}>{`Copy ${s.decision === 'interview' ? 'invite' : 'email'} & open ${viaLabel}`}</Button>
+                  <Button variant="secondary" onClick={() => setEditingMail(v => !v)}>{editingMail ? 'Show the design' : 'Edit wording'}</Button>
+                </div>
+                <p role="status" className="mt-2 text-[12.5px] text-muted">
+                  {copyState === 'copied' ? `Copied. In the new ${viaLabel} message, click in the body and press Ctrl+V.`
+                    : copyState === 'failed' ? "This browser wouldn't copy. Use plain text instead."
+                    : `Opens ${viaLabel} with the address and subject filled in; paste (Ctrl+V) to add the designed email.`}{' '}
+                  <button type="button" onClick={() => open(true)} className="text-proof underline">Plain text instead</button>
+                </p>
+              </>
+            ) : (
+              <p className="text-[14px] text-muted">This candidate didn't leave an email. Copy the feedback below and send it another way.</p>
+            )}
           </Card>
           {s.decision === 'interview' && (
             <Card className="ring-2 ring-proof">

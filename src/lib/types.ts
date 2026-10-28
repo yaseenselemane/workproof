@@ -43,7 +43,11 @@ export type Kit = {
  * yearsExperience is asked at the end of the test and kept from the scorer until every answer is
  * scored; it exists only to show what the ad's experience filter would have done.
  */
-export type Answers = { errors: string[]; note: string; ai: string; yearsExperience?: number }
+export type Answers = {
+  errors: string[]; note: string; ai: string; yearsExperience?: number
+  /** Hidden like the name until every answer is scored; used to send the invite or the feedback. */
+  email?: string
+}
 
 /** What the employer records about a hire after 90 days, to see whether the test predicted the job. */
 export type Checkin = { outcome: 'strong' | 'expected' | 'struggling'; note: string; at: number }

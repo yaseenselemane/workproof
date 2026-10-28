@@ -7,7 +7,9 @@ import { filesFor } from '../lib/ledger.ts'
 import { Button, Icon, Kicker } from '../components/ui.tsx'
 import { Mark } from '../components/Shell.tsx'
 
-type Saved = { no: number; start: number; name: string; done?: boolean }
+type Saved = { no: number; start: number; name: string; email?: string; done?: boolean }
+
+const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) && v.trim().length <= 200
 
 const key = (code: string) => `wp:cand:${code}`
 const loadSaved = (code: string): Saved | null => { try { return JSON.parse(localStorage.getItem(key(code)) ?? 'null') } catch { return null } }
@@ -28,6 +30,7 @@ export default function Candidate() {
   const [kit, setKit] = useState<Kit | null | undefined>(undefined)
   const [saved, setSaved] = useState<Saved | null>(() => loadSaved(code))
   const [name, setName] = useState(saved?.name ?? '')
+  const [email, setEmail] = useState(saved?.email ?? '')
   const [errors, setErrors] = useState(['', '', ''])
   const [note, setNote] = useState('')
   const [ai, setAi] = useState('')
@@ -57,7 +60,7 @@ export default function Candidate() {
     try {
       // shortcut: two candidates starting in the same second could draw the same number; fine at shortlist scale.
       const taken = await live.takenNumbers(code)
-      const s = { no: live.freeNumber(taken), start: Date.now(), name: name.trim() }
+      const s = { no: live.freeNumber(taken), start: Date.now(), name: name.trim(), email: email.trim() }
       saveSaved(code, s); setSaved(s)
     } catch (e) { setProblem((e as Error).message) } finally { setBusy(false) }
   }
@@ -68,7 +71,7 @@ export default function Candidate() {
     try {
       await live.submit(code, {
         candidateNo: saved.no, name: saved.name,
-        answers: { errors: errors.filter(e => e.trim()), note: note.trim(), ai: ai.trim() || 'None', yearsExperience: Math.max(0, Math.min(50, Math.round(Number(years)))) },
+        answers: { errors: errors.filter(e => e.trim()), note: note.trim(), ai: ai.trim() || 'None', yearsExperience: Math.max(0, Math.min(50, Math.round(Number(years)))), email: saved.email },
         minutes: Math.max(1, Math.round((Date.now() - saved.start) / 60_000)), submittedAt: Date.now(), scores: {}, followUp: '', decision: null,
       })
       const s = { ...saved, done: true }
@@ -102,9 +105,11 @@ export default function Candidate() {
         </ul>
         <label htmlFor="name" className="mb-1.5 mt-7 block text-[14px] font-semibold">Your name</label>
         <input id="name" value={name} onChange={e => setName(e.target.value)} autoComplete="name" className={field} />
-        <p className="mt-1.5 text-[12.5px] text-muted">Only shown to the employer after scoring is finished.</p>
+        <label htmlFor="email" className="mb-1.5 mt-4 block text-[14px] font-semibold">Your email</label>
+        <input id="email" type="email" inputMode="email" value={email} onChange={e => setEmail(e.target.value)} autoComplete="email" maxLength={200} aria-describedby="hidden-note" className={field} />
+        <p id="hidden-note" className="mt-1.5 text-[12.5px] text-muted">Both are only shown to the employer after scoring is finished, so they can send you the result and your feedback.</p>
         {problem && <p className="mt-3 text-[13.5px] text-proxy-ink">{problem}</p>}
-        <Button onClick={start} disabled={!name.trim() || busy} className="mt-6 min-h-13 w-full">Start the test</Button>
+        <Button onClick={start} disabled={!name.trim() || !isEmail(email) || busy} className="mt-6 min-h-13 w-full">Start the test</Button>
       </Frame>
     )
   }

@@ -16,7 +16,7 @@ South Africa already pays employers to hire young people through the Employment 
 4. **Live inbox.** Answers arrive within about two seconds, shown by candidate number only.
 5. **Blind scoring.** Each answer is scored against the written levels, with an answer key for that candidate's planted errors and one suggested live follow-up question. Names unlock only after every answer is scored.
 6. **The filter you didn't use.** At the end of the test, candidates say how many years of experience they have. The scorer never sees it. Once names unlock, WorkProof shows what the ad's experience rule would have done to these real candidates, for example: *"Your ad's '2+ years' rule would have rejected your top scorer."*
-7. **Decision receipt.** Scores, the answer key, declared AI use, the follow-up answer and the decision, plus feedback for the candidate built from the scoring sheet. An "invite" decision shows a note that the hire may qualify for the Employment Tax Incentive. Age is never asked.
+7. **Decision receipt.** Scores, the answer key, declared AI use, the follow-up answer and the decision, plus feedback for the candidate built from the scoring sheet. An "invite" decision shows a note that the hire may qualify for the Employment Tax Incentive. Age is never asked. Candidates leave an email when they start the test; like their name, it stays hidden until every answer is scored. Then the receipt shows a designed email built from the job's own kit (company, role, a heading for the decision, the scores and the scoring-sheet feedback), which the employer can reword. One button copies it and opens their own email app with the address and subject filled in; they paste it in. A plain-text version is one click away.
 8. **90-day check-in.** After hiring, the employer records how it is going. The inbox lists check-ins against test scores, so over time an employer can see whether the test predicts the job and improve it.
 
 Candidates may use AI tools during the test, as they would at work, and are asked to say which. The live follow-up question checks understanding.
@@ -52,7 +52,7 @@ Phones can't open `localhost`. Open the app at your computer's network address (
 ### Tests
 
 ```bash
-node --test src/lib/*.test.ts   # 15 tests: X-ray rules and ad rewrite, planted errors and answer key, rules kit, experience-filter comparison
+node --test src/lib/*.test.ts   # 18 tests: X-ray rules and ad rewrite, planted errors and answer key, rules kit, experience-filter comparison, result email
 npm run build                   # type-check and production build
 ```
 
@@ -73,6 +73,7 @@ Scores are validated on the server (A, B, C only, values 1–4) and merged per a
 - **Anyone with a candidate link can submit**, as with a shared form, so a link could be spammed. A real deployment needs rate limiting.
 - **Planted-error tests exist only for the bookkeeping sample.** Other roles get a written task scored against the sheet, with no automatic answer key.
 - **Years of experience are self-reported** and used only for the comparison after scoring, never to filter.
+- **WorkProof doesn't send email itself.** The result button opens the employer's email app with the message filled in; the employer sends it. There is no record in WorkProof of whether it was sent.
 - **The 90-day check-in is the employer's own judgement;** with a handful of hires it is a signal, not a statistic.
 - **The answer key is an aid, not a grade.** It matches on rand amounts and on what each error is about; the scorer decides.
 - **The rules X-ray reads bullet points** under "Requirements" and "Duties" headings. Ads written as prose need reformatting first.
