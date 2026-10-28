@@ -2,6 +2,8 @@
 
 **Proof you can do the job, not just a CV.**
 
+**Live demo: [workproof-gray.vercel.app](https://workproof-gray.vercel.app)**. Nothing to install. Start with the sample ad, open the candidate link on a phone, and watch the answer arrive.
+
 WorkProof turns a job ad an employer already has into a 45-minute test of the real work, sent to candidates' phones and scored blind. It is built for the Credify System Thinking Challenge 2026, challenge area 04: *how can employers identify capable graduates who lack traditional work experience?*
 
 ## The idea in one paragraph
