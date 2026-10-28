@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, LayoutGroup, motion } from 'motion/react'
 import { useHiring } from '../lib/store.tsx'
 import { draftKit } from '../lib/kit.ts'
+import type { Kit as KitT } from '../lib/types.ts'
 import { Button, Card, CardHead, Heading, Icon, Kicker, Page } from '../components/ui.tsx'
 
 const spring = { type: 'spring', stiffness: 260, damping: 30 } as const
@@ -13,11 +14,58 @@ const SOURCE = {
   rules: 'Drafted by rules from the duties',
 } as const
 
+const input = 'w-full rounded-xl bg-ground px-3.5 py-2.5 text-[14px] outline-none focus:ring-2 focus:ring-proof'
+
+function KitEditor({ kit, onSave, onCancel }: { kit: KitT; onSave: (k: KitT) => void; onCancel: () => void }) {
+  const [draft, setDraft] = useState<KitT>(() => structuredClone(kit))
+  const blank = draft.abilities.some(a => !a.name.trim()) || !draft.test.task.trim() || draft.rubric.some(r => r.levels.some(l => !l.trim()))
+  const setLevel = (ability: string, i: number, v: string) =>
+    setDraft(d => ({ ...d, rubric: d.rubric.map(r => (r.ability === ability ? { ...r, levels: r.levels.map((l, j) => (j === i ? v : l)) as KitT['rubric'][number]['levels'] } : r)) }))
+
+  return (
+    <Card aria-label="Edit the kit">
+      <CardHead title="Edit the kit" sub="Change anything before candidates see it. Every level needs words, so two scorers can still agree." />
+      <div className="flex flex-col gap-6">
+        {draft.abilities.map(a => {
+          const rubric = draft.rubric.find(r => r.ability === a.id)
+          return (
+            <fieldset key={a.id} className="flex flex-col gap-2.5">
+              <legend className="mb-1 flex items-center gap-2"><span className="grid h-7 w-7 place-items-center rounded-full bg-proof font-mono text-[12px] text-white">{a.id}</span><span className="text-[13px] text-muted">From &ldquo;{a.fromDuty}&rdquo;</span></legend>
+              <label htmlFor={`ab-${a.id}`} className="text-[13px] font-semibold">Ability {a.id}</label>
+              <input id={`ab-${a.id}`} className={input} value={a.name} onChange={e => setDraft(d => ({ ...d, abilities: d.abilities.map(x => (x.id === a.id ? { ...x, name: e.target.value } : x)) }))} />
+              {rubric && (
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {rubric.levels.map((lv, i) => (
+                    <div key={i}>
+                      <label htmlFor={`lv-${a.id}-${i}`} className="mb-1 block text-[12.5px] text-muted">{a.id}, score {i + 1}</label>
+                      <input id={`lv-${a.id}-${i}`} className={input} value={lv} onChange={e => setLevel(a.id, i, e.target.value)} />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </fieldset>
+          )
+        })}
+        <div>
+          <label htmlFor="task" className="mb-1.5 block text-[13px] font-semibold">The task the candidate gets</label>
+          <textarea id="task" rows={5} className={input} value={draft.test.task} onChange={e => setDraft(d => ({ ...d, test: { ...d.test, task: e.target.value } }))} />
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={() => onSave({ ...draft, edited: true })} disabled={blank}>Save the kit</Button>
+          <Button variant="secondary" onClick={onCancel}>Cancel</Button>
+          {blank && <span className="self-center text-[13px] text-proxy-ink">Fill in every field to save.</span>}
+        </div>
+      </div>
+    </Card>
+  )
+}
+
 export default function Kit() {
-  const { xray, adText, kit, setKit } = useHiring()
+  const { xray, adText, kit, setKit, inviteCode } = useHiring()
   const nav = useNavigate()
   const [error, setError] = useState<string | null>(null)
   const [merged, setMerged] = useState(false)
+  const [editing, setEditing] = useState(false)
   const tasks = xray.lines.filter(l => l.kind === 'task')
 
   useEffect(() => {
@@ -52,13 +100,15 @@ export default function Kit() {
       )}
       {!kit && !error && <Card className="mb-4"><p className="animate-pulse text-[14.5px] text-muted">Drafting the kit from the {tasks.length} real tasks…</p></Card>}
 
-      {kit && (
+      {kit && editing && <KitEditor kit={kit} onSave={k => { setKit(k); setEditing(false) }} onCancel={() => setEditing(false)} />}
+
+      {kit && !editing && (
         <LayoutGroup>
           <Card className="mb-4" aria-label="From duties to abilities">
             <CardHead
               title={merged ? 'The abilities to test' : 'The real tasks in the ad'}
               sub={merged ? 'Each one traces back to a duty the employer wrote.' : 'Merging into what the job actually needs…'}
-              action={<span className="rounded-full bg-ground px-3 py-1 font-mono text-[11.5px] text-muted">{SOURCE[kit.source]}</span>}
+              action={<span className="rounded-full bg-ground px-3 py-1 font-mono text-[11.5px] text-muted">{kit.edited ? 'Edited by you' : SOURCE[kit.source]}</span>}
             />
             {kit.note && <p className="-mt-2 mb-4 rounded-2xl bg-work-tint px-4 py-2.5 text-[13px] text-work">{kit.note}</p>}
             {!merged ? (
@@ -110,6 +160,9 @@ export default function Kit() {
                       <p className="mt-3 text-[13px] text-muted">Built once, used for every candidate on the shortlist.</p>
                     </Card>
                     <Button onClick={() => nav('/app/link')} className="min-h-13 w-full">Send to candidates <Icon.ArrowRight /></Button>
+                    {inviteCode
+                      ? <p className="text-[13px] text-muted">Already sent to candidates, so it's locked. Start over (↺ on the left) to change the test.</p>
+                      : <Button variant="secondary" onClick={() => setEditing(true)} className="w-full">Edit the kit</Button>}
                   </div>
                 </div>
 

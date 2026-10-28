@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { xrayAd, proxyLoad } from './xray.ts'
+import { xrayAd, proxyLoad, rewriteAd } from './xray.ts'
 import { SAMPLE_AD } from '../data/sample.ts'
 
 test('sample ad: proxies, trainable tool and duties land where the X-ray screen says', () => {
@@ -26,4 +26,18 @@ test('junior label check fires on years, reads Senior at 5+', () => {
 
 test('fairness flags only circumstance, school results and age', () => {
   assert.deepEqual(xrayAd(SAMPLE_AD).fairness, ['Matric with a 70%+ average', 'Own reliable transport'])
+})
+
+test('requiredYears is the most any requirement asks for', () => {
+  assert.equal(xrayAd(SAMPLE_AD).requiredYears, 2)
+  assert.equal(xrayAd('Clerk\nShop\nRequirements\n- Matric').requiredYears, 0)
+})
+
+test('the rewritten ad keeps every task, teaches the tool, and drops every proxy', () => {
+  const ad = rewriteAd(xrayAd(SAMPLE_AD))
+  for (const task of ['Reconcile bank statements monthly', 'Prepare VAT201 returns for review']) assert.match(ad, new RegExp(task))
+  assert.match(ad, /What we will teach you\n- Sage Pastel/)
+  for (const proxy of ['2 years', '70%', 'BCom', 'transport']) assert.doesNotMatch(ad, new RegExp(proxy))
+  assert.match(ad, /45-minute test/)
+  assert.doesNotMatch(ad, /\n\n\n/)
 })

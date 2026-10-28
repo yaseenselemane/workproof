@@ -12,13 +12,13 @@ export const liveMode: 'local' | 'supabase' = db ? 'supabase' : 'local'
 type Row = {
   id: string; invite_code: string; candidate_no: number; name: string; answers: Submission['answers']
   minutes: number; submitted_at: string; scores: Submission['scores']; follow_up: string
-  decision: Submission['decision']; sample: boolean
+  decision: Submission['decision']; sample: boolean; checkin: Submission['checkin']
 }
 
 const fromRow = (r: Row): Submission => ({
   id: r.id, candidateNo: r.candidate_no, name: r.name, answers: r.answers, minutes: r.minutes,
   submittedAt: Date.parse(r.submitted_at), scores: r.scores ?? {}, followUp: r.follow_up ?? '',
-  decision: r.decision, sample: r.sample,
+  decision: r.decision, sample: r.sample, checkin: r.checkin ?? null,
 })
 
 const fail = (e: { message: string } | null) => { if (e) throw new Error(e.message) }
@@ -136,6 +136,7 @@ export async function update(code: string, key: string, id: string, patch: Parti
   const { error } = await db.rpc('employer_update', {
     p_code: code, p_key: key, p_id: id,
     p_scores: patch.scores ?? null, p_follow_up: patch.followUp ?? null, p_decision: patch.decision ?? null,
+    p_checkin: patch.checkin ?? null,
   })
   fail(error)
   await ping(code)

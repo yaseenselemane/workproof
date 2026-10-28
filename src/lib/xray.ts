@@ -67,7 +67,25 @@ export function xrayAd(raw: string): Xray {
     .filter(l => l.kind === 'proxy' && (l.why === 'circumstance' || l.why === 'school results' || l.why === 'age'))
     .map(l => l.text)
 
-  return { title, employer, lines, labelMismatch, fairness }
+  return { title, employer, lines, labelMismatch, fairness, requiredYears: years }
+}
+
+/** The same job, advertised without the proxies: what the work is, what gets taught, and how to show you can do it. */
+export function rewriteAd(x: Xray, minutes = 45) {
+  const tasks = x.lines.filter(l => l.kind === 'task').map(l => `- ${l.text}`)
+  const taught = x.lines.filter(l => l.kind === 'trainable').map(l => `- ${l.text.replace(/^(experience|knowledge|proficiency)\s+(on|of|in|with)\s+/i, '')}`)
+  // A title that claimed entry level keeps its word; the requirements now match it.
+  return [
+    x.title,
+    x.employer,
+    '',
+    'What you will do',
+    ...tasks,
+    ...(taught.length ? ['', 'What we will teach you', ...taught] : []),
+    '',
+    'How to apply',
+    `No CV filter and no years-of-experience requirement. Take a ${minutes}-minute test of the real work on your phone. Every answer is scored against the same written sheet, without your name.`,
+  ].filter((l, i, all) => !(l === '' && all[i - 1] === '')).join('\n').trim()
 }
 
 export function proxyLoad(x: Xray) {

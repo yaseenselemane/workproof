@@ -31,6 +31,7 @@ export default function Candidate() {
   const [errors, setErrors] = useState(['', '', ''])
   const [note, setNote] = useState('')
   const [ai, setAi] = useState('')
+  const [years, setYears] = useState('')
   const [now, setNow] = useState(Date.now())
   const [busy, setBusy] = useState(false)
   const [problem, setProblem] = useState<string | null>(null)
@@ -66,7 +67,8 @@ export default function Candidate() {
     setBusy(true)
     try {
       await live.submit(code, {
-        candidateNo: saved.no, name: saved.name, answers: { errors: errors.filter(e => e.trim()), note: note.trim(), ai: ai.trim() || 'None' },
+        candidateNo: saved.no, name: saved.name,
+        answers: { errors: errors.filter(e => e.trim()), note: note.trim(), ai: ai.trim() || 'None', yearsExperience: Math.max(0, Math.min(50, Math.round(Number(years)))) },
         minutes: Math.max(1, Math.round((Date.now() - saved.start) / 60_000)), submittedAt: Date.now(), scores: {}, followUp: '', decision: null,
       })
       const s = { ...saved, done: true }
@@ -155,8 +157,13 @@ export default function Candidate() {
           <label htmlFor="ai" className="mb-1.5 block text-[15px] font-semibold">AI tools you used <span className="font-normal text-muted">(allowed)</span></label>
           <input id="ai" value={ai} onChange={e => setAi(e.target.value)} placeholder="None, or e.g. ChatGPT to check a formula" className={field} />
         </div>
+        <div>
+          <label htmlFor="years" className="mb-1.5 block text-[15px] font-semibold">Years of work experience doing this kind of work</label>
+          <input id="years" type="number" inputMode="numeric" min={0} max={50} value={years} onChange={e => setYears(e.target.value)} aria-describedby="years-help" className={field} />
+          <p id="years-help" className="mt-1.5 text-[12.5px] text-muted">0 is fine. The person scoring doesn't see this until every answer is scored. It's only used to show the employer what an experience requirement would have done.</p>
+        </div>
         {problem && <p className="text-[13.5px] text-proxy-ink">{problem}</p>}
-        <Button onClick={send} disabled={busy || errors.every(e => !e.trim())} className="min-h-13 w-full">Submit my answers</Button>
+        <Button onClick={send} disabled={busy || errors.every(e => !e.trim()) || years === ''} className="min-h-13 w-full">Submit my answers</Button>
       </div>
     </div>
   )

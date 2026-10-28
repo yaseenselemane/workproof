@@ -3,9 +3,15 @@ import { useParams } from 'react-router-dom'
 import gsap from 'gsap'
 import { useHiring, allScored, total } from '../lib/store.tsx'
 import { matchErrors } from '../lib/ledger.ts'
-import type { Decision } from '../lib/types.ts'
+import type { Checkin, Decision } from '../lib/types.ts'
 import { BigNum, Button, Card, CardHead, Heading, Icon, LinkButton, Page } from '../components/ui.tsx'
 import { tag } from './Live.tsx'
+
+export const OUTCOMES: { v: Checkin['outcome']; label: string }[] = [
+  { v: 'strong', label: 'Doing better than expected' },
+  { v: 'expected', label: 'Doing what we hoped' },
+  { v: 'struggling', label: 'Struggling' },
+]
 
 const DECISIONS: { v: Decision; label: string }[] = [
   { v: 'interview', label: 'Invite to final interview' },
@@ -15,10 +21,12 @@ const DECISIONS: { v: Decision; label: string }[] = [
 
 export default function Receipt() {
   const { id } = useParams()
-  const { submissions, kit, patch, inviteCode, loaded } = useHiring()
+  const { submissions, kit, patch, inviteCode, loaded, xray } = useHiring()
   const s = submissions.find(x => x.id === id)
   const paper = useRef<HTMLDivElement>(null)
   const [copied, setCopied] = useState(false)
+  const [outcome, setOutcome] = useState<Checkin['outcome'] | null>(null)
+  const [checkNote, setCheckNote] = useState('')
 
   useLayoutEffect(() => {
     if (!paper.current) return
@@ -71,9 +79,25 @@ export default function Receipt() {
             <div key={x.a.id} className={row}><span className="text-muted">{x.a.id} · {x.a.name}</span><span className="text-right"><strong className="font-mono">{x.v}/4</strong> <span className="text-muted">{x.text}</span></span></div>
           ))}
           {found !== null && <div className={row}><span className="text-muted">Answer key</span><span className="font-medium">{found} of 3 planted errors named</span></div>}
+          {typeof s.answers.yearsExperience === 'number' && (
+            <div className={row}>
+              <span className="text-muted">Experience</span>
+              <span className="max-w-[62%] text-right">
+                {revealed
+                  ? <>{s.answers.yearsExperience} years{xray.requiredYears > 0 && s.answers.yearsExperience < xray.requiredYears && <span className="text-proxy-ink"> · the ad's {xray.requiredYears}+ year rule would have rejected them</span>}</>
+                  : <span className="text-muted">Shown once every answer is scored</span>}
+              </span>
+            </div>
+          )}
           <div className={row}><span className="text-muted">AI declared</span><span className="text-right font-medium">{s.answers.ai}</span></div>
           <div className={row}><span className="text-muted">Live question</span><span className="max-w-[60%] text-right">{s.followUp || <span className="text-muted">Not recorded</span>}</span></div>
           <div className={row}><span className="text-muted">Scored</span><span className="font-medium">Blind, against the written sheet</span></div>
+          {s.checkin && (
+            <div className={row}>
+              <span className="text-muted">90-day check-in</span>
+              <span className="max-w-[62%] text-right"><strong>{OUTCOMES.find(o => o.v === s.checkin!.outcome)?.label}</strong>{s.checkin.note && <span className="text-muted"> · {s.checkin.note}</span>}</span>
+            </div>
+          )}
           <div className={`${row} border-0`}><span className="text-muted">Decision</span><span className="font-semibold text-proof">{DECISIONS.find(d => d.v === s.decision)?.label ?? 'Not decided yet'}</span></div>
         </div>
 
@@ -95,6 +119,32 @@ export default function Receipt() {
               <CardHead title="Employment Tax Incentive" />
               <p className="text-[14px]">If this candidate is aged 18 to 29, this hire may qualify for the Employment Tax Incentive, claimed through your monthly EMP201. Confirm the current rules with SARS before relying on it.</p>
               <p className="mt-2 text-[12.5px] text-muted">The test lowers the risk of a wrong judgement; the incentive lowers the cost. Age is never asked during the test.</p>
+            </Card>
+          )}
+          {s.decision === 'interview' && (
+            <Card aria-label="90-day check-in">
+              <CardHead title="90-day check-in" sub="If you hire them, come back after 90 days. Over time this shows whether the test predicts the job." />
+              {s.checkin && outcome === null ? (
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-[14px]"><strong>{OUTCOMES.find(o => o.v === s.checkin!.outcome)?.label}</strong> <span className="text-muted">· recorded {new Date(s.checkin.at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'long' })}</span></p>
+                  <Button variant="secondary" onClick={() => { setOutcome(s.checkin!.outcome); setCheckNote(s.checkin!.note) }}>Change</Button>
+                </div>
+              ) : (
+                <>
+                  <div className="flex flex-col gap-2" role="radiogroup" aria-label="How is the hire going?">
+                    {OUTCOMES.map(o => (
+                      <label key={o.v} className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-2xl px-4 text-[14px] font-medium transition-colors ${outcome === o.v ? 'bg-proof text-white' : 'bg-ground hover:bg-proof-tint'}`}>
+                        <input type="radio" name="checkin" className="sr-only" checked={outcome === o.v} onChange={() => setOutcome(o.v)} aria-label={o.label} />
+                        {outcome === o.v ? <Icon.Check /> : <span className="h-[18px] w-[18px] rounded-full ring-1 ring-faint" />}
+                        {o.label}
+                      </label>
+                    ))}
+                  </div>
+                  <label htmlFor="checknote" className="mb-1.5 mt-3 block text-[13px] font-semibold">One line on why <span className="font-normal text-muted">(optional)</span></label>
+                  <input id="checknote" value={checkNote} onChange={e => setCheckNote(e.target.value)} maxLength={300} className="min-h-11 w-full rounded-2xl bg-ground px-4 text-[14px] outline-none focus:ring-2 focus:ring-proof" />
+                  <Button className="mt-3" disabled={!outcome} onClick={() => { if (outcome) { patch(s.id, { checkin: { outcome, note: checkNote.trim(), at: Date.now() } }); setOutcome(null) } }}>Save check-in</Button>
+                </>
+              )}
             </Card>
           )}
           <Card>

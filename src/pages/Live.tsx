@@ -2,12 +2,14 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useHiring, allScored, total } from '../lib/store.tsx'
 import { matchErrors } from '../lib/ledger.ts'
+import { oldFilter } from '../lib/oldFilter.ts'
+import { OUTCOMES } from './Receipt.tsx'
 import type { Submission } from '../lib/types.ts'
 import { BigNum, Button, Card, Heading, Icon, LinkButton, Page } from '../components/ui.tsx'
 
 export const tag = (n: number) => `Candidate ${String(n).padStart(2, '0')}`
 
-function Row({ s, revealed, ledger }: { s: Submission; revealed: boolean; ledger: boolean }) {
+function Row({ s, revealed, ledger, wouldReject }: { s: Submission; revealed: boolean; ledger: boolean; wouldReject: boolean | null }) {
   const scored = !!(s.scores.A && s.scores.B && s.scores.C)
   const isNew = Date.now() - s.submittedAt < 3 * 60_000 && !s.sample
   const found = ledger ? matchErrors(s.candidateNo, s.answers.errors).filter(e => e.found).length : null
@@ -25,6 +27,11 @@ function Row({ s, revealed, ledger }: { s: Submission; revealed: boolean; ledger
           {revealed && <span className="font-mono text-[12px] text-muted">{tag(s.candidateNo)}</span>}
           {isNew && !scored && <span className="rounded-full bg-proof px-2.5 py-0.5 text-[11.5px] font-semibold text-white">New</span>}
           {s.sample && <span className="rounded-full bg-ground px-2 py-0.5 text-[11px] text-muted">sample</span>}
+          {revealed && wouldReject !== null && (
+            <span className={`rounded-full px-2.5 py-0.5 text-[11.5px] font-semibold ${wouldReject ? 'bg-proxy-tint text-proxy-ink' : 'bg-ground text-muted'}`}>
+              {s.answers.yearsExperience} yrs · old filter: {wouldReject ? 'rejected' : 'passed'}
+            </span>
+          )}
         </div>
         <p className="mt-1 text-[13.5px] text-muted">
           {found !== null ? `${found} of 3 planted errors named` : `${s.answers.errors.length} answers`}
@@ -41,7 +48,7 @@ function Row({ s, revealed, ledger }: { s: Submission; revealed: boolean; ledger
 }
 
 export default function Live() {
-  const { submissions, inviteCode, kit, loaded } = useHiring()
+  const { submissions, inviteCode, kit, loaded, xray } = useHiring()
   const [revealed, setRevealed] = useState(false)
   const [nudge, setNudge] = useState(false)
 
@@ -53,6 +60,9 @@ export default function Live() {
   const done = list.filter(s => s.scores.A && s.scores.B && s.scores.C).length
   const unlockable = allScored(list)
   const ledger = !!kit?.test.gets.includes('october_ledger.csv')
+  const shown = revealed && unlockable
+  const filter = oldFilter(list, xray.requiredYears)
+  const hasFilter = xray.requiredYears > 0 && filter.known.length > 0
 
   return (
     <Page>
@@ -79,8 +89,49 @@ export default function Live() {
         ))}
       </div>
 
+      <AnimatePresence>
+        {shown && hasFilter && (
+          <motion.section aria-label="The filter you didn't use" initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+            className={`hatch mb-4 rounded-[var(--radius-card)] p-6 text-white ${filter.rejected.length ? 'bg-proxy' : 'bg-proof'}`}>
+            <p className="font-mono text-[11.5px] uppercase tracking-[0.08em] text-white/80">The filter you didn't use</p>
+            <p className="mt-2 text-balance text-[clamp(20px,2.4vw,27px)] font-semibold leading-snug">
+              {filter.bestRejected
+                ? `Your ad's "${filter.requiredYears}+ years" rule would have rejected your top scorer.`
+                : `Your ad's "${filter.requiredYears}+ years" rule would have rejected ${filter.rejected.length} of ${filter.known.length} candidates.`}
+            </p>
+            {filter.best && (
+              <p className="mt-2 text-[15px] text-white/90">
+                {filter.best.name} scored {filter.bestScore}/12 with {filter.best.answers.yearsExperience} {filter.best.answers.yearsExperience === 1 ? "year's" : "years'"} experience.
+                {(() => {
+                  const others = filter.rejected.filter(s => s !== filter.best)
+                  if (!others.length) return null
+                  return ` ${filter.bestRejected ? 'Also rejected' : 'Rejected'} by the old rule: ${others.map(s => s.name).join(', ')}.`
+                })()}
+              </p>
+            )}
+          </motion.section>
+        )}
+      </AnimatePresence>
+
+      {list.some(s => s.checkin) && (
+        <Card className="mb-4" aria-label="Track record">
+          <h2 className="text-[15px] font-semibold">Did the test predict the job?</h2>
+          <p className="mb-3 mt-0.5 text-[13px] text-muted">Hires with a 90-day check-in, by test score.</p>
+          <ul className="flex flex-col">
+            {list.filter(s => s.checkin).sort((a, b) => total(b) - total(a)).map(s => (
+              <li key={s.id} className="flex flex-wrap items-center justify-between gap-3 border-b border-line py-2.5 text-[14px] last:border-0">
+                <span>{shown ? s.name : tag(s.candidateNo)} <span className="font-mono text-muted">{total(s)}/12</span></span>
+                <span className={`rounded-full px-3 py-1 text-[12.5px] font-semibold ${s.checkin!.outcome === 'struggling' ? 'bg-proxy-tint text-proxy-ink' : 'bg-proof-tint text-proof-deep'}`}>{OUTCOMES.find(o => o.v === s.checkin!.outcome)?.label}</span>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+
       <ul className="flex flex-col gap-3">
-        <AnimatePresence initial={false}>{list.map(s => <Row key={s.id} s={s} revealed={revealed && unlockable} ledger={ledger} />)}</AnimatePresence>
+        <AnimatePresence initial={false}>
+          {list.map(s => <Row key={s.id} s={s} revealed={shown} ledger={ledger} wouldReject={xray.requiredYears > 0 && typeof s.answers.yearsExperience === 'number' ? filter.wouldReject(s) : null} />)}
+        </AnimatePresence>
       </ul>
       {list.length === 0 && <Card><p className="animate-pulse text-muted">{loaded ? 'Waiting for the first submission…' : 'Loading answers…'}</p></Card>}
     </Page>

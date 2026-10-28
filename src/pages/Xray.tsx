@@ -1,8 +1,8 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import gsap from 'gsap'
 import { useHiring } from '../lib/store.tsx'
-import { proxyLoad } from '../lib/xray.ts'
+import { proxyLoad, rewriteAd } from '../lib/xray.ts'
 import { SAMPLE_AD } from '../data/sample.ts'
 import type { AdLine } from '../lib/types.ts'
 import { Button, Card, CardHead, Heading, Icon, Kicker, KindTag, Page, BigNum, kindStyle } from '../components/ui.tsx'
@@ -28,7 +28,15 @@ export default function Xray() {
   const root = useRef<HTMLDivElement>(null)
   const counter = useRef<HTMLSpanElement>(null)
   const tl = useRef<gsap.core.Timeline | null>(null)
+  const rewriteBox = useRef<HTMLTextAreaElement>(null)
+  const [copied, setCopied] = useState(false)
   const load = proxyLoad(xray)
+  const rewritten = rewriteAd(xray)
+
+  async function copyRewrite() {
+    try { await navigator.clipboard.writeText(rewritten); setCopied(true) }
+    catch { rewriteBox.current?.select() } // clipboard refused: leave it selected to copy by hand
+  }
   const sections = (['requirements', 'duties', 'other'] as const)
     .map(s => ({ s, lines: xray.lines.filter(l => l.section === s) }))
     .filter(g => g.lines.length)
@@ -124,6 +132,19 @@ export default function Xray() {
             {!load.tasks && <p className="text-[13px] text-muted">No duties found. Add a "Duties" heading above the tasks.</p>}
           </div>
         </div>
+
+        {load.tasks > 0 && (
+          <Card className="mt-4" aria-label="The ad without proxies">
+            <CardHead
+              title={<label htmlFor="rewrite">Your ad, without the proxies</label>}
+              sub="The same job, advertised by what the work is. Useful even if you never send a test."
+              action={<Button variant="secondary" onClick={copyRewrite} aria-live="polite">{copied ? <><Icon.Check /> Copied</> : <><Icon.Copy /> Copy</>}</Button>}
+            />
+            <textarea id="rewrite" ref={rewriteBox} readOnly value={rewritten} rows={Math.min(18, rewritten.split('\n').length + 1)}
+              className="w-full resize-y rounded-2xl bg-ground px-5 py-4 font-mono text-[13px] leading-relaxed text-ink outline-none focus:ring-2 focus:ring-proof" />
+            {load.proxies > 0 && <p className="mt-2 text-[13px] text-muted">Removed: {xray.lines.filter(l => l.kind === 'proxy').map(l => `"${l.text}"`).join(', ')}.</p>}
+          </Card>
+        )}
       </div>
     </Page>
   )

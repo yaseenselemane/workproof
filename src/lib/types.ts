@@ -17,6 +17,8 @@ export type Xray = {
   /** Set when the title claims an entry-level role the requirements contradict. */
   labelMismatch: { titled: string; reads: Level; reason: string } | null
   fairness: string[]
+  /** The most years of experience any requirement asks for; 0 when the ad asks for none. */
+  requiredYears: number
 }
 
 export type AbilityId = 'A' | 'B' | 'C'
@@ -33,9 +35,18 @@ export type Kit = {
   source: 'stored-sample' | 'claude' | 'rules'
   /** Why a rules kit was used instead of Claude, shown beside the kit. */
   note?: string
+  /** Set once the employer has changed anything, so the label stops claiming it's an untouched draft. */
+  edited?: boolean
 }
 
-export type Answers = { errors: string[]; note: string; ai: string }
+/**
+ * yearsExperience is asked at the end of the test and kept from the scorer until every answer is
+ * scored; it exists only to show what the ad's experience filter would have done.
+ */
+export type Answers = { errors: string[]; note: string; ai: string; yearsExperience?: number }
+
+/** What the employer records about a hire after 90 days, to see whether the test predicted the job. */
+export type Checkin = { outcome: 'strong' | 'expected' | 'struggling'; note: string; at: number }
 
 export type Scores = Partial<Record<AbilityId, 1 | 2 | 3 | 4>>
 
@@ -52,6 +63,7 @@ export type Submission = {
   scores: Scores
   followUp: string
   decision: Decision | null
+  checkin?: Checkin | null
   /** Seeded rows are labelled in the UI as sample data. */
   sample?: boolean
 }
