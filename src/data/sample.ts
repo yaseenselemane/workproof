@@ -20,7 +20,7 @@ Duties
 - Prepare VAT201 returns for review
 - Keep the owner informed on cash flow`
 
-/** Written for the sample ad and labelled as stored in the UI; new ads are drafted by Claude. */
+/** Written for the sample ad and labelled as stored in the UI; new ads are drafted by AI (Groq). */
 export const SAMPLE_KIT: Kit = {
   role: 'Junior Bookkeeper',
   source: 'stored-sample',

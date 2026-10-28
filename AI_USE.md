@@ -16,7 +16,7 @@ Working to those decisions, Claude Code drafted the analysis and system map, ran
 
 ## AI inside the product
 
-The `draft-kit` Edge Function calls **Claude Opus 5.5** to draft a kit for job ads other than the sample. The Ad X-ray does **not** use AI: it runs on written rules, so every flag can be explained.
+The `draft-kit` Edge Function calls **Groq's free API** (open-weight model `openai/gpt-oss-120b`) to draft a kit for job ads other than the sample. It sends only the job ad's title and duties, never candidate answers. The Ad X-ray does **not** use AI: it runs on written rules, so every flag can be explained.
 
 ## Reused code
 

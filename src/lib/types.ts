@@ -32,8 +32,8 @@ export type Kit = {
   /** levels[0] is score 1, levels[3] is score 4. */
   rubric: { ability: AbilityId; levels: [string, string, string, string] }[]
   /** Where the kit came from, shown to the user so a stored result is never passed off as live. */
-  source: 'stored-sample' | 'claude' | 'rules'
-  /** Why a rules kit was used instead of Claude, shown beside the kit. */
+  source: 'stored-sample' | 'ai' | 'rules'
+  /** Why a rules kit was used instead of the AI draft, shown beside the kit. */
   note?: string
   /** Set once the employer has changed anything, so the label stops claiming it's an untouched draft. */
   edited?: boolean

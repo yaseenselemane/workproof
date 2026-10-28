@@ -11,7 +11,7 @@ South Africa already pays employers to hire young people through the Employment 
 ## What it does
 
 1. **Ad X-ray.** Paste a job ad. Written rules mark each line as a *proxy* (years of experience, school marks, degree, own transport), *trainable* (a software tool) or a *real task*. It flags ads titled "Junior" whose requirements read Intermediate or Senior, and raises a fairness flag on proxies that screen by circumstance. Rules, not AI, so every flag can be explained. It also hands back **the same ad rewritten without the proxies**, ready to copy, which is useful even if the employer never sends a test.
-2. **Kit.** The real tasks become up to three abilities, a 45-minute test and a four-level scoring sheet. The sample ad has a hand-built kit; any other ad is drafted by Claude, or by rules when Claude isn't set up. Each kit says where it came from, and **the employer can edit every word** before sending; once sent, it locks.
+2. **Kit.** The real tasks become up to three abilities, a 45-minute test and a four-level scoring sheet. The sample ad has a hand-built kit; any other ad is drafted by AI on Groq's free tier, or by rules when no Groq key is set. Each kit says where it came from, and **the employer can edit every word** before sending; once sent, it locks.
 3. **Live candidate link.** A link and QR code. Candidates take the test on their own phones. For the bookkeeping sample, each candidate gets their own ledger with three of six possible planted errors (20 combinations), so answers can't be passed around.
 4. **Live inbox.** Answers arrive within about two seconds, shown by candidate number only.
 5. **Blind scoring.** Each answer is scored against the written levels, with an answer key for that candidate's planted errors and one suggested live follow-up question. Names unlock only after every answer is scored.
@@ -27,7 +27,7 @@ Candidates may use AI tools during the test, as they would at work, and are aske
 - **Tailwind CSS 4**, self-hosted fonts (Plus Jakarta Sans, IBM Plex Mono): the app makes no third-party requests at runtime except to Supabase
 - **Motion** for in-app transitions, **GSAP** for the X-ray scan, the receipt and the landing page, **Lenis** for smooth scrolling on the landing page only. Everything respects the reduced-motion setting.
 - **Supabase**: Postgres, Realtime broadcast, and an Edge Function
-- **Claude Opus 5.5** via the Anthropic SDK in the `draft-kit` Edge Function, with structured JSON output and server-side refusal fallback
+- **Groq** free tier (open-weight model `openai/gpt-oss-120b`) in the `draft-kit` Edge Function, with strict JSON-schema output
 - **qrcode** for the candidate link QR code
 
 ## Run it
@@ -45,7 +45,7 @@ Open http://localhost:5173. With no `.env.local`, WorkProof runs in **local mode
 
 1. Create a Supabase project and run the three files in [`supabase/migrations/`](supabase/migrations/) in order (`0001`, `0002`, `0003`) in the SQL editor.
 2. Copy `.env.example` to `.env.local` and fill in the project URL and anon key.
-3. Optional, for Claude-drafted kits: deploy [`supabase/functions/draft-kit`](supabase/functions/draft-kit/index.ts) and add an `ANTHROPIC_API_KEY` secret under Edge Functions → Secrets.
+3. Optional, for AI-drafted kits: deploy [`supabase/functions/draft-kit`](supabase/functions/draft-kit/index.ts) and add a `GROQ_API_KEY` secret under Edge Functions → Secrets. The key is free from console.groq.com, no card needed.
 
 Phones can't open `localhost`. Open the app at your computer's network address (Vite prints it as `Network:`), or set `VITE_PUBLIC_URL`, so the QR code points somewhere a phone can reach.
 
@@ -78,7 +78,7 @@ Scores are validated on the server (A, B, C only, values 1–4) and merged per a
 - **The rules X-ray reads bullet points** under "Requirements" and "Duties" headings. Ads written as prose need reformatting first.
 - **Candidate numbers** are picked at random from those not taken; two candidates starting in the same second could draw the same one.
 - **Realtime** depends on a websocket; if it drops, the inbox falls back to refreshing every 8 seconds.
-- **Claude-drafted kits** need an Anthropic API key and cost a few cents each; without one, new ads get the rules kit.
+- **AI-drafted kits** need a free Groq API key and are subject to Groq's free-tier rate limits; without a key, or past the limit, new ads get the rules kit.
 - The Supabase project is in eu-west-1 (Ireland), the closest region on offer, so live updates take about two seconds from South Africa.
 
 ## How it was built

@@ -10,7 +10,7 @@ const spring = { type: 'spring', stiffness: 260, damping: 30 } as const
 
 const SOURCE = {
   'stored-sample': 'Stored kit for the sample ad',
-  claude: 'Drafted by Claude · edit before sending',
+  ai: 'Drafted by AI · edit before sending',
   rules: 'Drafted by rules from the duties',
 } as const
 

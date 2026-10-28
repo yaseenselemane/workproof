@@ -6,14 +6,14 @@ const url = import.meta.env.VITE_SUPABASE_URL as string | undefined
 const anon = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
 
 /**
- * Sample ad: its stored kit. Any other ad: Claude drafts it; if Claude is unreachable or not set up,
+ * Sample ad: its stored kit. Any other ad: AI (Groq, via the draft-kit function) drafts it; if that is unreachable or not set up,
  * the rules kit stands in, labelled as such. So every ad with duties gets a working kit.
  */
 export async function draftKit(adText: string, xray: Xray): Promise<Kit> {
   if (adText.trim() === SAMPLE_AD.trim()) return SAMPLE_KIT
   const tasks = xray.lines.filter(l => l.kind === 'task').map(l => l.text)
   if (!tasks.length) throw new Error('This ad has no duties to build a test from. Add a "Duties" heading above the tasks.')
-  if (!url || !anon) return { ...rulesKit(xray), note: 'Claude is not connected, so this kit was drafted from the duties by rules.' }
+  if (!url || !anon) return { ...rulesKit(xray), note: 'AI drafting is not connected, so this kit was drafted from the duties by rules.' }
   try {
     const res = await fetch(`${url}/functions/v1/draft-kit`, {
       method: 'POST',
@@ -24,8 +24,8 @@ export async function draftKit(adText: string, xray: Xray): Promise<Kit> {
     if (!res.ok) throw new Error(await res.text())
     const kit = (await res.json()) as Omit<Kit, 'source'>
     if (!kit.abilities?.length || !kit.rubric?.length) throw new Error('incomplete kit')
-    return { ...kit, source: 'claude' }
+    return { ...kit, source: 'ai' }
   } catch {
-    return { ...rulesKit(xray), note: "Claude couldn't be reached, so this kit was drafted from the duties by rules." }
+    return { ...rulesKit(xray), note: "The AI drafter couldn't be reached, so this kit was drafted from the duties by rules." }
   }
 }
