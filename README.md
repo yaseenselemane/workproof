@@ -52,7 +52,7 @@ Phones can't open `localhost`. Open the app at your computer's network address (
 ### Tests
 
 ```bash
-node --test src/lib/*.test.ts   # 18 tests: X-ray rules and ad rewrite, planted errors and answer key, rules kit, experience-filter comparison, result email
+node --test src/lib/*.test.ts   # 19 tests: X-ray rules and ad rewrite, planted errors and answer key, rules kit, experience-filter comparison, result email
 npm run build                   # type-check and production build
 ```
 
