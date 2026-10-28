@@ -22,7 +22,8 @@ The `draft-kit` Edge Function calls **Groq's free API** (open-weight model `open
 
 None copied from templates or other projects. Open-source libraries are listed in `package.json`.
 
-## Figures to verify
+## Figures checked (28 October 2026)
 
-- The 12.4% graduate unemployment figure is from the Stats SA Q2 2026 presentation slides; check it against the official media release before quoting.
-- Employment Tax Incentive amounts differ between sources. WorkProof relies only on the incentive existing; confirm current rules at sars.gov.za before quoting an amount.
+- Graduate unemployment of 12.4% in Q2 2026 (12.2% in Q1 2026): Stats SA, QLFS Q2 2026 statistical release (P0211), section 4.1. The Q4 2025 figure of 10.3% is from the Stats SA QLFS Q4 2025 presentation.
+- Youth unemployment of 47.4% (15 to 34) and the 33.6% official rate: Stats SA QLFS Q2 2026 media release, 11 August 2026. 62.8% (15 to 24) and the NEET rate of 36.4%: the Q2 2026 presentation and release.
+- Employment Tax Incentive: SARS guide PAYE-GEN-01-G05. Employees aged 18 to 29; it reduces the employer's PAYE, claimed on the monthly EMP201; up to R1,500 a month in the first 12 months (rates from 1 April 2025); it runs until 28 February 2029.
