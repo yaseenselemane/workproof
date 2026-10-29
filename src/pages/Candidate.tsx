@@ -107,7 +107,7 @@ export default function Candidate() {
         <input id="name" value={name} onChange={e => setName(e.target.value)} autoComplete="name" className={field} />
         <label htmlFor="email" className="mb-1.5 mt-4 block text-[14px] font-semibold">Your email</label>
         <input id="email" type="email" inputMode="email" value={email} onChange={e => setEmail(e.target.value)} autoComplete="email" maxLength={200} aria-describedby="hidden-note" className={field} />
-        <p id="hidden-note" className="mt-1.5 text-[12.5px] text-muted">Both are only shown to the employer after scoring is finished, so they can send you the result and your feedback.</p>
+        <p id="hidden-note" className="mt-1.5 text-[12.5px] text-muted">Both are only shown to the employer after scoring is finished, so they can send you the result and your feedback. <a href="/privacy" target="_blank" className="text-proof underline">What we store</a></p>
         {problem && <p className="mt-3 text-[13.5px] text-proxy-ink">{problem}</p>}
         <Button onClick={start} disabled={!name.trim() || !isEmail(email) || busy} className="mt-6 min-h-13 w-full">Start the test</Button>
       </Frame>

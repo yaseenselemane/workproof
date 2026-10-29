@@ -62,6 +62,8 @@ npm run build                   # type-check and production build
 
 ## How the data is protected
 
+What is captured and stored is listed in plain words on the app's [privacy notice](https://workproof-gray.vercel.app/privacy) (`/privacy`). No ID number, age, CV or tracking cookies are collected.
+
 Both tables have row-level security on and **no policies**, so the browser cannot read or write them directly. Every operation goes through one of six `SECURITY DEFINER` functions:
 
 | Who | Can | Checked by |

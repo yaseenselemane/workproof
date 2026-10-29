@@ -12,6 +12,7 @@ import './styles.css'
 const Landing = lazy(() => import('./pages/Landing.tsx'))
 const Candidate = lazy(() => import('./pages/Candidate.tsx'))
 const EmployerApp = lazy(() => import('./EmployerApp.tsx'))
+const Privacy = lazy(() => import('./pages/Privacy.tsx'))
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -22,6 +23,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/" element={<Landing />} />
             <Route path="/t/:code" element={<Candidate />} />
             <Route path="/app/*" element={<EmployerApp />} />
+            <Route path="/privacy" element={<Privacy />} />
           </Routes>
         </Suspense>
       </BrowserRouter>

@@ -106,7 +106,7 @@ export default function Landing() {
 
         <footer className="flex flex-col gap-1 border-t border-line py-8 text-[12.5px] text-muted">
           <p>Sources: Stats SA Quarterly Labour Force Survey Q2 2026; CareerJunction and Pnet listings read on 28 October 2026; SARS Employment Tax Incentive.</p>
-          <p>Built by Yaseen Selemane for the Credify System Thinking Challenge 2026.</p>
+          <p>Built by Yaseen Selemane for the Credify System Thinking Challenge 2026. <Link to="/privacy" className="text-proof">Privacy notice</Link></p>
         </footer>
       </div>
     </div>
